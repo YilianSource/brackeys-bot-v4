@@ -2,19 +2,35 @@
 
 ## Building
 
-Once you pulled the project, you will first need to install the dependancies.
+Once you pulled the project, you will first need to install the dependancies. The project uses `gulp` to manage the build process. Possible serving tasks are `dashboard` or `bot`, dependng on what you want to run.
 
 ```bash
-npm i
+npm install
+
+gulp dashboard
+<or>
+gulp bot
 ```
 
-The project uses `gulp` to manage the build process. Running `npm start` will automatically run the gulpfile and start up the main entry point of the application, which includes the bot and the dashboard.
+You can also just run `gulp` to perform a full build of the project.
 
-If you get any errors about gulp or typescript not being installed, try installing their respective CLI tools globally via npm.
+The gulp tasks use `nodemon` to automatically refresh the application on code change.
 
-To configure the access tokens, create a `.env` file in the project root. Here you can configure the DB_HOST, DB_USER, DB_PASSWORD, DB_SCHEMA and the DISCORD_TOKEN.
+> If you get any errors about gulp or typescript not being installed, try installing their respective CLI tools globally via `npm`.
 
-Once all of this is set up, run `npm start` and the build scripts should handle everything else!
+## Configuration
+
+The project uses a `.env` file at the project root to store secret tokens.
+
+| Config Value | Description |
+|:--|:--|
+| `DB_HOST` | The host string of the database. (default: `localhost`) |
+| `DB_USER` | The name of the user to access the database with. (default: `root`) |
+| `DB_PASSWORD` | The password to access the database with. |
+| `DB_SCHEMA` | The database schema to access. (default: `brackeysbot`)
+| `BOT_TOKEN` | The token to start the Discord bot with.
+| `DASHBOARD_CLIENT_ID` | The client ID to use for the OAuth process in the dashboard. |
+| `DASHBOARD_CLIENT_SECRET` | The client secret to use for the OAuth process in the dashboard. |
 
 ## Database
 

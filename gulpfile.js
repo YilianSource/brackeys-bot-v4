@@ -1,41 +1,73 @@
 const { src, dest } = require('gulp');
 const gulp = require('gulp');
 const del = require('del');
-
+const nodemon = require('gulp-nodemon');
 const ts = require('gulp-typescript');
-var tsProject = ts.createProject('tsconfig.json');
+const sass = require('gulp-sass');
+sass.compiler = require('node-sass');
 
-const chalk = require('chalk');
-
-function progress(message) {
-    process.stdout.cursorTo(0);
-    process.stdout.clearLine();
-    process.stdout.write(chalk`{dim.gray [gulp]} {reset ${message}}`)
-}
-
-
+/**
+ * Compiles the entire TypeScript project.
+ */
 gulp.task('ts', function() {
-    progress(chalk`{dim Compiling {yellow TypeScript} ...}`);
+    const tsProject = ts.createProject('tsconfig.json');
     return tsProject.src()
         .pipe(tsProject()).js
         .pipe(dest('dist'));
 });
-
-gulp.task('copy', function() {
-    progress(chalk`{dim Copying {yellow static files} ...}`);
-    return src('src/main/resources/*.yaml')
-        .pipe(dest('dist/main/resources'));
+/**
+ * Compiles all Sass files.
+ */
+gulp.task('sass', function() {
+    return gulp.src('src/main/code/dashboard/public/sass/**/*.sass')
+        .pipe(sass.sync({outputStyle: 'compressed', sourceMap: false}).on('error', sass.logError))
+        .pipe(gulp.dest('dist/main/code/dashboard/public/css'));
 });
-
+/**
+ * Copies static resources (except .ts and .sass files) into the dist directory.
+ */
+gulp.task('static', function() {
+    return src(['src/**/*.*', '!src/**/*.ts', '!src/**/*.sass'])
+        .pipe(dest('dist'));
+});
+/**
+ * Cleans the dist directory.
+ */
 gulp.task('clean', function() {
-    progress(chalk`{dim Cleaning {yellow ./dist/} ...}`);
     return del('dist/**');
 });
 
-gulp.task('done', function() {
-    progress(chalk`{dim We're all done!}`);
-    process.stdout.write('\n');
-    return Promise.resolve();
-})
-
-gulp.task('default', gulp.series('clean', 'ts', 'copy', 'done'));
+/**
+ * Compiles TypeScript and Sass files.
+ */
+gulp.task('compile', gulp.parallel('ts', 'sass'));
+/**
+ * Performs a full build of the project by cleaning, compiling and copying.
+ */
+gulp.task('fullbuild', gulp.series('clean', gulp.parallel('compile', 'static')));
+/**
+ * Alias for fullbuild.
+ */
+gulp.task('default', gulp.series('fullbuild'));
+/**
+ * Serves an instance of the dashboard.
+ */
+gulp.task('dashboard', gulp.series('fullbuild', function() {
+    return nodemon({
+        script: 'dist/main/code/dashboard/index.js',
+        watch: 'src/main/code/dashboard/',
+        tasks: ['compile', 'static'],
+        ext: 'ts,sass,pug'
+    });
+}));
+/**
+ * Serves an instance of the bot.
+ */
+gulp.task('bot', gulp.series('fullbuild', function() {
+    return nodemon({
+        script: 'dist/main/code/bot/index.js',
+        watch: 'src/main/code/bot/',
+        tasks: ['compile', 'static'],
+        ext: 'ts'
+    });
+}));

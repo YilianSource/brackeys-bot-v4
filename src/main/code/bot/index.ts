@@ -1,13 +1,6 @@
 import { Client } from "discord.js";
+import path from 'path';
 
-class Bot {
-    client!: Client;
+require('dotenv').config({ path: path.join(process.cwd(), ".env") });
 
-    public start(token: string): Promise<string> {
-        this.client = new Client();
-
-        return this.client.login(token);
-    }
-}
-
-export default new Bot();
+new Client().login(process.env.BOT_TOKEN || '');
