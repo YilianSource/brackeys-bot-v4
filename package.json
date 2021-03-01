@@ -1,0 +1,34 @@
+{
+    "name": "brackeys-bot-v4",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "discord.js": "^12.5.1",
+        "mysql": "^2.18.1",
+        "reflect-metadata": "^0.1.10",
+        "typeorm": "0.2.31"
+    },
+    "devDependencies": {
+        "@types/node": "^14.14.31",
+        "@types/ws": "^7.4.0",
+        "ts-node": "3.3.0",
+        "typescript": "3.3.3333"
+    },
+    "scripts": {
+        "build": "tsc --build tsconfig.json",
+        "dev": "tsc --build --watch tsconfig.json",
+        "start": "node ./build/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/YilianSource/brackeys-bot-v4.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/YilianSource/brackeys-bot-v4/issues"
+    },
+    "homepage": "https://github.com/YilianSource/brackeys-bot-v4#readme"
+}
